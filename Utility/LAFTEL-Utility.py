@@ -2,6 +2,7 @@ import codecs
 import configparser
 import json
 import requests
+from urllib import parse
 
 # User Info
 config = configparser.ConfigParser()
@@ -10,13 +11,8 @@ token = config.get('LAFTEL', 'token')
 user_id = config.get('LAFTEL', 'user_id')
 
 headers = {
-    'Accept-Encoding':'gzip, deflate, br',
-    'authority':'laftel.net',
-    'accept':'application/json, text/plain, */*',
-    'authorization':f'Token {token}',
     'laftel':'TeJava',
-    'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Whale/2.8.108.15 Safari/537.36',
-    'accept-language':'ko,en-US;q=0.9,en;q=0.8'
+    'authorization':f'Token {token}',
 }
 
 def getWishList(user_id):
@@ -50,3 +46,41 @@ def clearWishList(user_id):
         if value:
             code = editWishItem(key, False)
             print(f'{key}:{code}')
+
+def getItemByYears(years, sort='rank'):
+    year = parse.quote(','.join(years))
+    response = requests.get(f'https://laftel.net/api/search/v1/discover/?sort={sort}&years={year}', headers=headers)
+    data = json.loads(response.text)
+    return data
+
+def getItemByTags(tags, exclude_tags=[], sort='rank'):
+    tag = parse.quote(','.join(tags))
+    exclude_tag = parse.quote(','.join(exclude_tags))
+    response = requests.get(f'https://laftel.net/api/search/v1/discover/?sort={sort}&tags={tag}&exclude_tags={exclude_tag}', headers=headers)
+    data = json.loads(response.text)
+    return data
+
+def getItemByGenres(genres, exclude_genres=[], sort='rank'):
+    genre = parse.quote(','.join(genres))
+    exclude_genre = parse.quote(','.join(exclude_genres))
+    response = requests.get(f'https://laftel.net/api/search/v1/discover/?sort={sort}&genres={genre}&exclude_genres={exclude_genre}', headers=headers)
+    data = json.loads(response.text)
+    return data
+
+def getItem(years=[], tags=[], exclude_tags=[], genres=[], exclude_genres=[], sort='rank'):
+    year = parse.quote(','.join(years))
+    tag = parse.quote(','.join(tags))
+    exclude_tag = parse.quote(','.join(exclude_tags))
+    genre = parse.quote(','.join(genres))
+    exclude_genre = parse.quote(','.join(exclude_genres))
+
+    response = requests.get(f'https://laftel.net/api/search/v1/discover/?sort={sort}&years={year}&tags={tag}&exclude_tags={exclude_tag}&genres={genre}&exclude_genres={exclude_genre}', headers=headers)
+    data = json.loads(response.text)
+    return data
+
+#print(getItemByYears([]))
+#print(getItemByYears(['2020년 1분기', '2020년 2분기']))
+#print(getItemByTags(['먼치킨', '이세계'], ['역하렘']))
+#print(getItemByTags([], ['게임']))
+#print(getItemByGenres(['판타지', '로맨스'], ['액션']))
+#print(getItem(['2021년 1분기', '2020년 4분기'], ['이세계'], ['학교'], ['판타지'], ['순정'], 'recent'))
