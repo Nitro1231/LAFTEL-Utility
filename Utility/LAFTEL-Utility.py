@@ -15,6 +15,34 @@ headers = {
     'authorization':f'Token {token}',
 }
 
+def getUserInfo():
+    response = requests.get('https://laftel.net/api/v1.0/users/myinfo/', headers=headers)
+    data = json.loads(response.text)
+    return data
+    
+#print(getUserInfo())
+
+def getDailyItems():
+    response = requests.get('https://laftel.net/api/search/v2/daily/', headers=headers)
+    data = json.loads(response.text)
+    return data
+
+#print(getDailyItems())
+
+def searchAutoComplete(keyword):
+    response = requests.get(f'https://laftel.net/api/search/v1/auto_complete/?keyword={parse.quote(keyword)}', headers=headers)
+    data = json.loads(response.text)
+    return data
+
+#print(searchAutoComplete('뉴 게임'))
+
+def searchItem(keyword):
+    response = requests.get(f'https://laftel.net/api/search/v1/keyword/?keyword={parse.quote(keyword)}', headers=headers)
+    data = json.loads(response.text)
+    return data
+
+#print(searchItem(searchAutoComplete('뉴 게임')[0]))
+
 def getWishList(user_id):
     """
     Get wish items from the LAFTEL DB and return the JSON formatted list file.
@@ -22,9 +50,8 @@ def getWishList(user_id):
      - Return ``JSON`` that includes the wish list.
     """
     response = requests.get(f'https://laftel.net/api/v1.0/users/{user_id}/rate/is_wish/', headers=headers)
-    data = response.text
-    wish = json.loads(data)
-    return wish
+    data = json.loads(response.text)
+    return data
 
 def editWishItem(item_id, wish):
     """
@@ -46,6 +73,11 @@ def clearWishList(user_id):
         if value:
             code = editWishItem(key, False)
             print(f'{key}:{code}')
+
+def getDiscoverList():
+    response = requests.get('https://laftel.net/api/v1.0/info/discover/', headers=headers)
+    data = json.loads(response.text)
+    return data
 
 def getItemByYears(years, sort='rank'):
     year = parse.quote(','.join(years))
@@ -78,6 +110,7 @@ def getItem(years=[], tags=[], exclude_tags=[], genres=[], exclude_genres=[], so
     data = json.loads(response.text)
     return data
 
+#print(getDiscoverList())
 #print(getItemByYears([]))
 #print(getItemByYears(['2020년 1분기', '2020년 2분기']))
 #print(getItemByTags(['먼치킨', '이세계'], ['역하렘']))
