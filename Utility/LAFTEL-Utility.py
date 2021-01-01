@@ -19,29 +19,21 @@ def getUserInfo():
     response = requests.get('https://laftel.net/api/v1.0/users/myinfo/', headers=headers)
     data = json.loads(response.text)
     return data
-    
-#print(getUserInfo())
 
 def getDailyItems():
     response = requests.get('https://laftel.net/api/search/v2/daily/', headers=headers)
     data = json.loads(response.text)
     return data
 
-#print(getDailyItems())
-
 def searchAutoComplete(keyword):
     response = requests.get(f'https://laftel.net/api/search/v1/auto_complete/?keyword={parse.quote(keyword)}', headers=headers)
     data = json.loads(response.text)
     return data
 
-#print(searchAutoComplete('뉴 게임'))
-
 def searchItem(keyword):
     response = requests.get(f'https://laftel.net/api/search/v1/keyword/?keyword={parse.quote(keyword)}', headers=headers)
     data = json.loads(response.text)
     return data
-
-#print(searchItem(searchAutoComplete('뉴 게임')[0]))
 
 def getWishList(user_id):
     """
@@ -73,6 +65,21 @@ def clearWishList(user_id):
         if value:
             code = editWishItem(key, False)
             print(f'{key}:{code}')
+
+def getItemDetail(item_id):
+    response = requests.get(f'https://laftel.net/api/v1.0/items/{item_id}/detail/', headers=headers)
+    data = json.loads(response.text)
+    return data
+
+def getItemEpisodes(item_id, limit=1000):
+    response = requests.get(f'https://laftel.net/api/episodes/v1/list/?item_id={item_id}&limit={limit}', headers=headers)
+    data = json.loads(response.text)
+    return data
+
+def getRelatedItem(item_id):
+    response = requests.get(f'https://laftel.net/api/v1.0/items/{item_id}/related/', headers=headers)
+    data = json.loads(response.text)
+    return data
 
 def getDiscoverList():
     response = requests.get('https://laftel.net/api/v1.0/info/discover/', headers=headers)
