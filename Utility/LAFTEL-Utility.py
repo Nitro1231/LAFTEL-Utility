@@ -2,7 +2,6 @@ import codecs
 import configparser
 import json
 import requests
-from urllib import parse
 
 # User Info
 config = configparser.ConfigParser()
@@ -26,12 +25,12 @@ def getDailyItems():
     return data
 
 def searchAutoComplete(keyword):
-    response = requests.get(f'https://laftel.net/api/search/v1/auto_complete/?keyword={parse.quote(keyword)}', headers=headers)
+    response = requests.get('https://laftel.net/api/search/v1/auto_complete/', headers=headers, params={ 'keyword': keyword })
     data = json.loads(response.text)
     return data
 
 def searchItem(keyword):
-    response = requests.get(f'https://laftel.net/api/search/v1/keyword/?keyword={parse.quote(keyword)}', headers=headers)
+    response = requests.get('https://laftel.net/api/search/v1/keyword/', headers=headers, params={ 'keyword': keyword })
     data = json.loads(response.text)
     return data
 
@@ -72,7 +71,11 @@ def getItemDetail(item_id):
     return data
 
 def getItemEpisodes(item_id, limit=1000):
-    response = requests.get(f'https://laftel.net/api/episodes/v1/list/?item_id={item_id}&limit={limit}', headers=headers)
+    params = {
+        'item_id': item_id,
+        'limit': limit
+    }
+    response = requests.get('https://laftel.net/api/episodes/v1/list/', headers=headers, params=params)
     data = json.loads(response.text)
     return data
 
@@ -86,41 +89,21 @@ def getDiscoverList():
     data = json.loads(response.text)
     return data
 
-def getItemByYears(years, sort='rank'):
-    year = parse.quote(','.join(years))
-    response = requests.get(f'https://laftel.net/api/search/v1/discover/?sort={sort}&years={year}', headers=headers)
+def getItem(years=[], tags=[], exclude_tags=[], genres=[], exclude_genres=[], sort='rank', viewable=None, svod=None, ending=None):
+    params = {
+        'years': (','.join(years)),
+        'tags': (','.join(tags)),
+        'exclude_tags': (','.join(exclude_tags)),
+        'genres': (','.join(genres)),
+        'exclude_genres': (','.join(exclude_genres)),
+        'sort': sort,
+        'viewable': viewable,
+        'svod': svod,
+        'ending': ending
+    }
+    response = requests.get('https://laftel.net/api/search/v1/discover/', headers=headers, params=params)
     data = json.loads(response.text)
     return data
 
-def getItemByTags(tags, exclude_tags=[], sort='rank'):
-    tag = parse.quote(','.join(tags))
-    exclude_tag = parse.quote(','.join(exclude_tags))
-    response = requests.get(f'https://laftel.net/api/search/v1/discover/?sort={sort}&tags={tag}&exclude_tags={exclude_tag}', headers=headers)
-    data = json.loads(response.text)
-    return data
-
-def getItemByGenres(genres, exclude_genres=[], sort='rank'):
-    genre = parse.quote(','.join(genres))
-    exclude_genre = parse.quote(','.join(exclude_genres))
-    response = requests.get(f'https://laftel.net/api/search/v1/discover/?sort={sort}&genres={genre}&exclude_genres={exclude_genre}', headers=headers)
-    data = json.loads(response.text)
-    return data
-
-def getItem(years=[], tags=[], exclude_tags=[], genres=[], exclude_genres=[], sort='rank'):
-    year = parse.quote(','.join(years))
-    tag = parse.quote(','.join(tags))
-    exclude_tag = parse.quote(','.join(exclude_tags))
-    genre = parse.quote(','.join(genres))
-    exclude_genre = parse.quote(','.join(exclude_genres))
-
-    response = requests.get(f'https://laftel.net/api/search/v1/discover/?sort={sort}&years={year}&tags={tag}&exclude_tags={exclude_tag}&genres={genre}&exclude_genres={exclude_genre}', headers=headers)
-    data = json.loads(response.text)
-    return data
-
-#print(getDiscoverList())
-#print(getItemByYears([]))
-#print(getItemByYears(['2020년 1분기', '2020년 2분기']))
-#print(getItemByTags(['먼치킨', '이세계'], ['역하렘']))
-#print(getItemByTags([], ['게임']))
-#print(getItemByGenres(['판타지', '로맨스'], ['액션']))
 #print(getItem(['2021년 1분기', '2020년 4분기'], ['이세계'], ['학교'], ['판타지'], ['순정'], 'recent'))
+#print(getItem())
