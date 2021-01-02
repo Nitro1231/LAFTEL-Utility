@@ -17,22 +17,22 @@ headers = {
 def getUserInfo():
     response = requests.get('https://laftel.net/api/v1.0/users/myinfo/', headers=headers)
     data = json.loads(response.text)
-    return data
+    return data, response.status_code
 
 def getDailyItems():
     response = requests.get('https://laftel.net/api/search/v2/daily/', headers=headers)
     data = json.loads(response.text)
-    return data
+    return data, response.status_code
 
 def searchAutoComplete(keyword):
     response = requests.get('https://laftel.net/api/search/v1/auto_complete/', headers=headers, params={ 'keyword': keyword })
     data = json.loads(response.text)
-    return data
+    return data, response.status_code
 
 def searchItem(keyword):
     response = requests.get('https://laftel.net/api/search/v1/keyword/', headers=headers, params={ 'keyword': keyword })
     data = json.loads(response.text)
-    return data
+    return data, response.status_code
 
 def getWishList(user_id):
     """
@@ -42,7 +42,7 @@ def getWishList(user_id):
     """
     response = requests.get(f'https://laftel.net/api/v1.0/users/{user_id}/rate/is_wish/', headers=headers)
     data = json.loads(response.text)
-    return data
+    return data, response.status_code
 
 def editWishItem(item_id, wish):
     """
@@ -68,7 +68,7 @@ def clearWishList(user_id):
 def getItemDetail(item_id):
     response = requests.get(f'https://laftel.net/api/v1.0/items/{item_id}/detail/', headers=headers)
     data = json.loads(response.text)
-    return data
+    return data, response.status_code
 
 def getItemEpisodes(item_id, limit=1000):
     params = {
@@ -77,17 +77,17 @@ def getItemEpisodes(item_id, limit=1000):
     }
     response = requests.get('https://laftel.net/api/episodes/v1/list/', headers=headers, params=params)
     data = json.loads(response.text)
-    return data
+    return data, response.status_code
 
 def getRelatedItem(item_id):
     response = requests.get(f'https://laftel.net/api/v1.0/items/{item_id}/related/', headers=headers)
     data = json.loads(response.text)
-    return data
+    return data, response.status_code
 
 def getDiscoverList():
     response = requests.get('https://laftel.net/api/v1.0/info/discover/', headers=headers)
     data = json.loads(response.text)
-    return data
+    return data, response.status_code
 
 def getItem(years=[], tags=[], exclude_tags=[], genres=[], exclude_genres=[], sort='rank', viewable=None, svod=None, ending=None):
     params = {
@@ -103,7 +103,7 @@ def getItem(years=[], tags=[], exclude_tags=[], genres=[], exclude_genres=[], so
     }
     response = requests.get('https://laftel.net/api/search/v1/discover/', headers=headers, params=params)
     data = json.loads(response.text)
-    return data
+    return data, response.status_code
 
 #print(getItem(['2021년 1분기', '2020년 4분기'], ['이세계'], ['학교'], ['판타지'], ['순정'], 'recent'))
 #print(getItem())
